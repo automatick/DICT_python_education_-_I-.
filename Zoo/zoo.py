@@ -39,8 +39,16 @@ indexes = dict()
 for match in matches:
     indexes[match[0]] = [match[1], match[2]]
 
-print("Please enter the number of the habitat you would like to view.")
+print("Please enter the number of the habitat you would like to view or print 'exit' for exit.")
 index = input("-> ")
-name = indexes[index][0]
-art = indexes[index][1]
-print(f"Showing the {name} habitat...\n{art}")
+# 4 stage
+while index != "exit":
+    if index in indexes:
+        name = indexes[index][0]
+        art = indexes[index][1]
+    else:
+        print("invalid input or incorrect index")
+        index = input("-> ")
+        continue
+    print(f"Showing the {name} habitat...\n{art}")
+    index = input("Enter next index -> ")
