@@ -52,3 +52,4 @@ while index != "exit":
         continue
     print(f"Showing the {name} habitat...\n{art}")
     index = input("Enter next index -> ")
+print("See you later!")
