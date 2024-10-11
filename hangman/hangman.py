@@ -18,10 +18,10 @@ while True:
                 guess = guess[:i] + letter + guess[i + 1:]
     if not correct:
         attempts -= 1
+        print("That letter doesn't appear in the word")
         if attempts == 0:
             print("You lost")
             break
     if "-" not in guess:
         print("You won")
         break
-print(guess)
