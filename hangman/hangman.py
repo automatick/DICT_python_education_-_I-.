@@ -1,12 +1,27 @@
-import random
+from random import choice
 
 print("HANGMAN")
+
 words: list = ["python", "java", "php", "javascript"]
+random_word: list = choice(words)
+guess: str = "-" * len(random_word)
+attempts: int = 8
 
-random_word: list = random.choice(words)
-
-if input(f"Guess the word {random_word[:3] + (len(random_word) - 3) * '-'} -> ") == random_word:
-    print("you survived")
-
-else:
-    print("you dead")
+while True:
+    print(guess)
+    letter: str = input("Input a letter -> ")[0]
+    correct: bool = False
+    for i in range(len(random_word)):
+        if random_word[i] == letter:
+            correct = True
+            if 0 <= i < len(guess):
+                guess = guess[:i] + letter + guess[i + 1:]
+    if not correct:
+        attempts -= 1
+        if attempts == 0:
+            print("You lost")
+            break
+    if "-" not in guess:
+        print("You won")
+        break
+print(guess)
