@@ -2,7 +2,7 @@ import sys
 import random
 
 count: int = int(input("Enter the number of friends joining (including you): -> "))
-friends: dict = {}
+friends: dict[str, int] = {}
 
 if count < 0:
     print("Incorrect number")
@@ -33,4 +33,15 @@ lucky: bool = True if input('Do you want to use the "Who is lucky?" feature? Wri
 
 if lucky:
     luckyPerson: str = random.choice(list(friends.keys()))
+    friends[luckyPerson] = 0
     print(f"{luckyPerson} is the lucky one!")
+else:
+    print(friends)
+    sys.exit()
+
+newAmountForOne: int = round( amount / (len(friends) - 1), 2 )
+
+for i in friends.keys():
+    if i != luckyPerson: friends[i] = newAmountForOne
+
+print(friends)
