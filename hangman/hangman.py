@@ -14,6 +14,7 @@ def game():
     usedLetters: list[str] = []
     singleLetter: bool = True
     notEng: bool = False
+    duplicate: bool = False
     
     while True:
         print("\033[H\033[J" + guess)
@@ -30,6 +31,9 @@ def game():
         elif notEng:
             print("Please enter the lovercase english letter!")
             notEng = False
+        elif duplicate:
+            print("You already use this letter!")
+            duplicate = False
             
         letter: str
         if (letter := input("Input a letter -> ")) == "":
@@ -37,6 +41,11 @@ def game():
         elif len(letter) != 1:
             singleLetter = False
             continue
+        elif letter in usedLetters:
+            duplicate = True
+            continue
+
+        usedLetters.append(letter)
 
         if letter not in ascii_lowercase:
             notEng = True
