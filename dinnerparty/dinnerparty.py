@@ -7,7 +7,7 @@ incorrect_input = True
 while incorrect_input:
     try:
         count: int = int(input("Enter the number of friends joining (including you): -> "))
-        incorect_input = False
+        break
     except ValueError:
         print("No one joined the party:(")
 
