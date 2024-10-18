@@ -13,3 +13,13 @@ print("Enter the name of every friend (including you), each on a new line:")
 
 for i in range(count):
     friends[input("-> ")] = 0
+
+amount: int = int(input("Enter a total ammount -> "))
+amountForOne: int = 0
+
+amountForOne = round( amount / len(friends), 2 )
+
+for i in friends:
+    friends[i] = amountForOne
+
+print(friends)
