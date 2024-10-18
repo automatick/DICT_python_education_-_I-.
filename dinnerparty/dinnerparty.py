@@ -1,7 +1,16 @@
 import sys
 import random
 
-count: int = int(input("Enter the number of friends joining (including you): -> "))
+
+incorrect_input = True
+
+while incorrect_input:
+    try:
+        count: int = int(input("Enter the number of friends joining (including you): -> "))
+        incorect_input = False
+    except ValueError:
+        print("No one joined the party:(")
+
 friends: dict[str, int] = {}
 
 if count < 0:
