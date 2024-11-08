@@ -1,87 +1,104 @@
-# Функція для обробки приготування кави
-def make_coffee(drink_type):
-    print("\nStarting to make a coffee")
-    print("Grinding coffee beans")  # Мелемо кавові зерна
-    print("Boiling water")  # Кип'ятимо воду
-    print("Mixing boiled water with crushed coffee beans")  # Змішуємо каву з кип'яченою водою
+class CoffeeMachine:
+    def __init__(self):
+        # Ініціалізація початкових значень
+        self.water = 400
+        self.milk = 540
+        self.coffee_beans = 120
+        self.cups = 9
+        self.money = 550
+        self.state = 'waiting_for_action'
 
-    if drink_type in ['latte', 'cappuccino']:
-        print("Pouring some milk into the cup")  # Додаємо молоко
+    def handle_input(self, action):
+        # Обробка вводу залежно від поточного стану
+        if self.state == 'waiting_for_action':
+            self.process_action(action)
+        elif self.state == 'choosing_coffee':
+            self.process_coffee_choice(action)
+        elif self.state == 'filling':
+            self.process_fill(action)
 
-    print("Pouring coffee into the cup")  # Наливаємо каву до чашки
-    print("Coffee is ready!")  # Кава готова!
-
-# Функція для підрахунку інгредієнтів на основі типу напою та кількості чашок
-def calculate_ingredients(drink_type, cups):
-    # Різні пропорції для еспресо, латте та капучіно
-    if drink_type == 'espresso':
-        water = 250 * cups  # Еспресо потребує 250 мл води
-        milk = 0  # Без молока
-        coffee_beans = 16 * cups  # 16 г кавових зерен
-    elif drink_type == 'latte':
-        water = 350 * cups  # Латте потребує 350 мл води
-        milk = 75 * cups  # 75 мл молока
-        coffee_beans = 20 * cups  # 20 г кавових зерен
-    elif drink_type == 'cappuccino':
-        water = 200 * cups  # Капучіно потребує 200 мл води
-        milk = 100 * cups  # 100 мл молока
-        coffee_beans = 12 * cups  # 12 г кавових зерен
-    else:
-        raise ValueError("Invalid coffee type specified!")  # Перехоплення неправильно введеного типу кави
-
-    return water, milk, coffee_beans
-
-# Функція для перевірки доступних інгредієнтів із додатковою обробкою помилок
-def check_resources(drink_type, available_water, available_milk, available_coffee, cups_needed):
-    try:
-        required_water, required_milk, required_coffee = calculate_ingredients(drink_type, cups_needed)
-    except ValueError as e:
-        print(str(e))
-        return
-
-    # Перевіряємо чи достатньо інгредієнтів для приготування потрібної кількості кави
-    if available_water >= required_water and available_milk >= required_milk and available_coffee >= required_coffee:
-        extra_cups = min(available_water // required_water, available_milk // required_milk, available_coffee // required_coffee) - cups_needed
-        if extra_cups > 0:
-            print(f"Yes, I can make that amount of coffee (and even {extra_cups} more than that).")
+    def process_action(self, action):
+        # Обробка команд користувача в основному меню
+        if action == 'buy':
+            self.state = 'choosing_coffee'
+            print("Що ви хочете купити? 1 - еспресо, 2 - латте, 3 - капучино, back - до головного меню:")
+        elif action == 'fill':
+            self.state = 'filling'
+            self.fill_stage = 0
+            print("Напишіть, скільки мл води ви хочете додати:")
+        elif action == 'take':
+            print(f"Я дав вам ${self.money}")
+            self.money = 0
+        elif action == 'remaining':
+            self.show_remaining()
+        elif action == 'exit':
+            exit()
         else:
-            print("Yes, I can make that amount of coffee.")
-    else:
-        max_cups = min(available_water // (required_water // cups_needed), 
-                       available_milk // (required_milk // cups_needed), 
-                       available_coffee // (required_coffee // cups_needed))
-        print(f"No, I can make only {max_cups} cups of coffee.")
+            # Невірна команда
+            print("Невірна дія. Спробуйте ще раз.")
 
-# Функція для безпечного введення цілих чисел із перевіркою на помилки
-def safe_integer_input(prompt):
-    while True:
+    def process_coffee_choice(self, choice):
+        # Обробка вибору кави
+        if choice == '1':
+            self.make_coffee(250, 0, 16, 4)
+        elif choice == '2':
+            self.make_coffee(350, 75, 20, 7)
+        elif choice == '3':
+            self.make_coffee(200, 100, 12, 6)
+        elif choice == 'back':
+            self.state = 'waiting_for_action'
+        else:
+            # Невірний вибір
+            print("Невірний вибір. Спробуйте ще раз.")
+
+    def make_coffee(self, water, milk, coffee, price):
+        # Створення кави залежно від наявних ресурсів
+        if self.water < water:
+            print("Вибачте, недостатньо води!")
+        elif self.milk < milk:
+            print("Вибачте, недостатньо молока!")
+        elif self.coffee_beans < coffee:
+            print("Вибачте, недостатньо кавових зерен!")
+        elif self.cups < 1:
+            print("Вибачте, недостатньо одноразових чашок!")
+        else:
+            print("У мене достатньо ресурсів, готую каву!")
+            self.water -= water
+            self.milk -= milk
+            self.coffee_beans -= coffee
+            self.cups -= 1
+            self.money += price
+        self.state = 'waiting_for_action'
+
+    def process_fill(self, amount):
+        # Обробка введення кількості додаваних ресурсів
         try:
-            value = int(input(prompt))
-            return value
+            amount = int(amount)
         except ValueError:
-            print("Please enter a valid number.")  # Повідомлення про помилку, якщо введено некоректне значення
+            print("Будь ласка, введіть число!")
+            return
 
-# Основна програма для взаємодії з користувачем
-if __name__ == "__main__":
-    try:
-        # Безпечне введення кількості інгредієнтів
-        available_water = safe_integer_input("Write how many ml of water the coffee machine has: ")
-        available_milk = safe_integer_input("Write how many ml of milk the coffee machine has: ")
-        available_coffee = safe_integer_input("Write how many grams of coffee beans the coffee machine has: ")
-        cups_needed = safe_integer_input("Write how many cups of coffee you will need: ")
+        stages = ["води", "молока", "кавових зерен", "одноразових чашок"]
+        amounts = [self.water, self.milk, self.coffee_beans, self.cups]
+        amounts[self.fill_stage] += amount
+        self.fill_stage += 1
 
-        # Перевіряємо чи достатньо ресурсів
-        drink_type = input("Choose coffee type (espresso/latte/cappuccino): ").strip().lower()
-        
-        if drink_type not in ['espresso', 'latte', 'cappuccino']:
-            raise ValueError("Invalid coffee type! Please choose espresso, latte or cappuccino.")
-        
-        check_resources(drink_type, available_water, available_milk, available_coffee, cups_needed)
-        
-        # Якщо можна, готуємо каву
-        make_coffee(drink_type)
+        if self.fill_stage < len(stages):
+            print(f"Напишіть, скільки {stages[self.fill_stage]} ви хочете додати:")
+        else:
+            self.state = 'waiting_for_action'
 
-    except ValueError as e:
-        print(f"Error: {e}")  # Обробляємо помилки неправильного вибору типу кави
-    except Exception as e:
-        print(f"Unexpected error: {e}")  # Інші можливі системні помилки
+    def show_remaining(self):
+        # Показати наявні ресурси
+        print("У кавоварці залишилось:")
+        print(f"{self.water} мл води")
+        print(f"{self.milk} мл молока")
+        print(f"{self.coffee_beans} г кавових зерен")
+        print(f"{self.cups} одноразових чашок")
+        print(f"{self.money} доларів")
+
+# Приклад використання
+machine = CoffeeMachine()
+while True:
+    action = input("Введіть дію (buy, fill, take, remaining, exit): ")
+    machine.handle_input(action)
