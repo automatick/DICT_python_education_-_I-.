@@ -1,9 +1,6 @@
 from typing import Self
 import math
 
-from typing import Self
-import math
-
 class Matrix:
     @staticmethod
     def is_valid(array):
