@@ -148,6 +148,34 @@ class Matrix:
         return str(self.array)
 
 
+def input_matrix() -> Matrix:
+    try:
+        # Введення кількості рядків та стовпців
+        rows = int(input("Enter the number of rows: "))
+        cols = int(input("Enter the number of columns: "))
+
+        # Перевірка коректності вводу
+        if rows <= 0 or cols <= 0:
+            print("Number of rows and columns must be positive integers.")
+            return None
+
+        matrix = []
+
+        print(f"Enter the matrix elements (row by row, space-separated):")
+        for i in range(rows):
+            row = list(map(float, input(f"Row {i+1}: ").split()))
+            if len(row) != cols:
+                print(f"Row {i+1} does not have {cols} columns. Please try again.")
+                return None
+            matrix.append(row)
+
+        # Повертаємо об'єкт класу Matrix
+        return Matrix(matrix)
+
+    except ValueError:
+        print("Invalid input. Please enter valid numbers.")
+        return None
+
 
 
 def main():
