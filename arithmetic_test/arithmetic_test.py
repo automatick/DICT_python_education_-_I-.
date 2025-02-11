@@ -3,24 +3,32 @@ import random  # Імпортуємо модуль для генерації в�
 def generate_question(level):
     """
     Генерує арифметичне завдання залежно від рівня складності.
-    Рівень 1: арифметичні операції з числами від 2 до 9.
-    Рівень 2: зведення у квадрат чисел від 11 до 29.
     """
     if level == 1:
-        num1, num2 = random.randint(2, 9), random.randint(2, 9)
-        operation = random.choice(['+', '-', '*'])
-        question = f"{num1} {operation} {num2}"
-        answer = eval(question)  # Обчислення правильної відповіді
+        return generate_simple_operation()
     elif level == 2:
-        num = random.randint(11, 29)
-        question = f"{num}"
-        answer = num ** 2  # Обчислення квадрата числа
+        return generate_square_question()
+
+def generate_simple_operation():
+    """
+    Генерує арифметичну операцію з числами від 2 до 9.
+    """
+    num1, num2 = random.randint(2, 9), random.randint(2, 9)
+    operation = random.choice(['+', '-', '*'])
+    question = f"{num1} {operation} {num2}"
+    answer = eval(question)  # Обчислення правильної відповіді
     return question, answer
+
+def generate_square_question():
+    """
+    Генерує завдання на зведення у квадрат числа від 11 до 29.
+    """
+    num = random.randint(11, 29)
+    return f"{num}", num ** 2  # Обчислення квадрата числа
 
 def get_valid_input():
     """
     Отримує введене користувачем число та перевіряє його формат.
-    Якщо формат неправильний (літери, порожній ввід), виводить "Incorrect format." і просить повторити.
     """
     while True:
         user_input = input("> ")
@@ -28,13 +36,10 @@ def get_valid_input():
             return int(user_input)
         print("Incorrect format.")
 
-def main():
+def choose_level():
     """
-    Основна функція програми. Запитує рівень складності, проводить тест з 5 питань,
-    підраховує правильні відповіді та (за бажанням користувача) зберігає результат у файл.
+    Запитує у користувача рівень складності.
     """
-    
-    # Вибір рівня складності
     print("Which level do you want? Enter a number:")
     print("1 - simple operations with numbers 2-9")
     print("2 - integral squares of 11-29")
@@ -42,15 +47,17 @@ def main():
     while True:
         level_input = input("> ")
         if level_input in ('1', '2'):
-            level = int(level_input)
-            break
+            return int(level_input)
         print("Incorrect format.")
 
-    correct_answers = 0  # Лічильник правильних відповідей
+def ask_questions(level, num_questions=5):
+    """
+    Проводить тест із вказаною кількістю питань та повертає кількість правильних відповідей.
+    """
+    correct_answers = 0
 
-    # Проведення тесту з 5 питань
-    for _ in range(5):
-        question, correct_answer = generate_question(level)  # Генеруємо питання та правильну відповідь
+    for _ in range(num_questions):
+        question, correct_answer = generate_question(level)  # Генеруємо питання та відповідь
         print(question)
         user_answer = get_valid_input()  # Отримуємо відповідь користувача
 
@@ -60,22 +67,34 @@ def main():
         else:
             print("Wrong!")
 
-    # Виведення підсумкового результату
+    return correct_answers
+
+def save_result(username, correct_answers, level):
+    """
+    Зберігає результат у файл results.txt.
+    """
+    level_desc = "simple operations with numbers 2-9" if level == 1 else "integral squares of 11-29"
+    result_entry = f"{username}: {correct_answers}/5 in level {level} ({level_desc})\n"
+
+    with open("results.txt", "a") as file:
+        file.write(result_entry)
+
+    print('The results are saved in "results.txt".')
+
+def main():
+    """
+    Основна функція програми.
+    """
+    level = choose_level()  # Вибір рівня
+    correct_answers = ask_questions(level)  # Проведення тесту
+
     print(f"Your mark is {correct_answers}/5.")
 
-    # Пропозиція збереження результату у файл
-    save_result = input("Would you like to save your result to the file? Enter yes or no.\n> ").strip().lower()
-    if save_result in ("yes", "y"):
+    # Пропозиція збереження результату
+    save_result_choice = input("Would you like to save your result to the file? Enter yes or no.\n> ").strip().lower()
+    if save_result_choice in ("yes", "y"):
         username = input("What is your name?\n> ")
-        level_desc = "simple operations with numbers 2-9" if level == 1 else "integral squares of 11-29"
-        result_entry = f"{username}: {correct_answers}/5 in level {level} ({level_desc})\n"
-
-        # Запис у файл
-        with open("results.txt", "a") as file:
-            file.write(result_entry)
-
-        print('The results are saved in "results.txt".')
+        save_result(username, correct_answers, level)
 
 if __name__ == "__main__":
     main()
-
